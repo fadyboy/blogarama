@@ -1,4 +1,4 @@
-blog
+#blog
 *.db
 .idea
 bin
