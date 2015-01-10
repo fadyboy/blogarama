@@ -42,5 +42,15 @@ def add_post_post():
 
     return redirect(url_for("posts"))
 
+# view individual post
+@app.route("/post/<int:id>")
+def view_post(id):
+    # get post.id from posts page and query post based on number
+    page_id =id
+    post = session.query(Post).filter(Post.id == page_id).all()
+
+    return render_template("view_post.html", post=post, page_id=page_id)
+
+
 
 
