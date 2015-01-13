@@ -51,6 +51,31 @@ def view_post(id):
 
     return render_template("view_post.html", post=post, page_id=page_id)
 
+# edit selected post
+@app.route("/post/<int:id>/edit", methods=["GET"])
+def edit_post_get(id):
+    # get post id for content and title to be pre-populated in form
+    page_id = id
+    post_details = session.query(Post).filter(Post.id == page_id)
+
+    return render_template("edit_post.html", post_details=post_details)
+
+@app.route("/post/<int:id>/edit", methods=["POST"])
+def edit_post_post(id):
+    page_id = id
+
+    post = session.query(Post).get(page_id)
+    post.title = request.form['title']
+    post.content = request.form['content']
+    session.add(post)
+    session.commit()
+
+    # return to posts page after updating post
+
+    return redirect(url_for("posts"))
+
+
+
 
 
 
