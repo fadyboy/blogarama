@@ -74,6 +74,28 @@ def edit_post_post(id):
 
     return redirect(url_for("posts"))
 
+# Select post for delete
+@app.route("/post/<int:id>/delete")
+def delete_post(id):
+    page_id = id
+
+    # get the post based on the post id
+    post = session.query(Post).get(page_id)
+
+    return render_template("delete_post.html", post=post)
+
+# confirm post to delete
+@app.route("/<int:id>")
+def delete_post_confirm(id):
+    page_id = id
+
+    post = session.query(Post).get(page_id)
+    session.delete(post)
+    session.commit()
+
+    return redirect(url_for("posts"))
+
+
 
 
 
