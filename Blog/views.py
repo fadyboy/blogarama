@@ -1,9 +1,11 @@
 # logic for page views
 import mistune
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
+from flask.ext.login import login_user, login_required
+from werkzeug.security import check_password_hash
 
 from Blog import app
-from models import Post
+from models import Post, User
 from database import session
 
 @app.route("/")
@@ -27,11 +29,13 @@ def posts(page=1, paginate_by=10):
                            total_pages=total_pages)
 
 @app.route("/post/add", methods=['GET'])
+@login_required
 def add_post_get():
 
     return render_template('add_post.html')
 
 @app.route("/post/add", methods=['POST'])
+@login_required
 def add_post_post():
     post = Post(
         title = request.form['title'],
@@ -53,6 +57,7 @@ def view_post(id):
 
 # edit selected post
 @app.route("/post/<int:id>/edit", methods=["GET"])
+@login_required
 def edit_post_get(id):
     # get post id for content and title to be pre-populated in form
     page_id = id
@@ -61,6 +66,7 @@ def edit_post_get(id):
     return render_template("edit_post.html", post_details=post_details)
 
 @app.route("/post/<int:id>/edit", methods=["POST"])
+@login_required
 def edit_post_post(id):
     page_id = id
 
@@ -76,6 +82,7 @@ def edit_post_post(id):
 
 # Select post for delete
 @app.route("/post/<int:id>/delete")
+@login_required
 def delete_post(id):
     page_id = id
 
@@ -86,6 +93,7 @@ def delete_post(id):
 
 # confirm post to delete
 @app.route("/<int:id>")
+@login_required
 def delete_post_confirm(id):
     page_id = id
 
@@ -94,6 +102,27 @@ def delete_post_confirm(id):
     session.commit()
 
     return redirect(url_for("posts"))
+
+# login page views
+@app.route("/login", methods=["GET"])
+def login_get():
+    return render_template("login.html")
+
+@app.route("/login", methods=["POST"])
+def login_post():
+    # pass in values from the submitted form
+    email = request.form["email"]
+    password = request.form["password"]
+    user = session.query(User).filter_by(email=email).first()
+
+    # check if user email and password match
+    if not user or not check_password_hash(user.password, password):
+        flash("Incorrect username or password", "danger")
+        return redirect(url_for("login_get"))
+
+    login_user(user)
+
+    return redirect(request.args.get('next') or url_for('posts'))
 
 
 
