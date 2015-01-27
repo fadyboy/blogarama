@@ -14,9 +14,10 @@
             <a href="{{ url_for("view_post", id=post.id)}}">{{ post.title }}</a>
         </h1>
         {{ post.content | safe }}<br />
-        <!-- Edit post button that takes user to edit post page -->
+        <!-- Display the Edit and Delete buttons for logged in user and if user is author of post-->
         {% if g.user.is_authenticated() %}
-            {% if post.author.name == g.user.name %}
+            {% if post.author.id == g.user.id %}
+            <!-- Edit post button that takes user to edit post page -->
             <a href="{{ url_for("edit_post_get", id=post.id) }}"> <button class="btn btn-default">Edit Post</button></a>
             <!-- Delete post button that takes user to delete post page -->
             <a href="{{ url_for("delete_post", id=post.id) }}"><button class="btn btn-default">Delete Post</button> </a>
