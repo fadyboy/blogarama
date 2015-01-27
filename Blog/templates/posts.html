@@ -2,7 +2,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+    {% if g.user.is_authenticated() %}
+    <a href="{{ url_for('add_post_get') }}">Add Post</a>
+    {% endif %}
     {% for post in posts %}
 
         {{ macros.render_post(post) }}

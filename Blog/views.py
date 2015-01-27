@@ -1,7 +1,7 @@
 # logic for page views
 import mistune
-from flask import render_template, request, redirect, url_for, flash
-from flask.ext.login import login_user, login_required
+from flask import render_template, request, redirect, url_for, flash, g
+from flask.ext.login import login_user, login_required, current_user, logout_user
 from werkzeug.security import check_password_hash
 
 from Blog import app
@@ -19,7 +19,7 @@ def posts(page=1, paginate_by=10):
     end = start + paginate_by
 
     total_pages = (count - 1) / paginate_by + 1
-    has_next = page_index < total_pages -1
+    has_next = page_index < total_pages - 1
     has_previous = page_index > 0
 
     posts = session.query(Post).order_by(Post.datetime.desc())
@@ -39,7 +39,8 @@ def add_post_get():
 def add_post_post():
     post = Post(
         title = request.form['title'],
-        content = mistune.markdown(request.form['content'])
+        content = mistune.markdown(request.form['content']),
+        author = current_user
     )
     session.add(post)
     session.commit()
@@ -121,8 +122,25 @@ def login_post():
         return redirect(url_for("login_get"))
 
     login_user(user)
+    flash("Logged in successfully")
 
     return redirect(request.args.get('next') or url_for('posts'))
+
+# logout user
+@app.route("/logout")
+def logout():
+    # logout current user and redirect to ordinary posts page
+    #user = current_user
+    logout_user()
+
+    return redirect(url_for("posts"))
+
+# use the g global variable to store data(logged in user) during the life of a request
+@app.before_request
+def before_request():
+    g.user = current_user
+
+
 
 
 

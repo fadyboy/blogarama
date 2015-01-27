@@ -8,8 +8,21 @@ from Blog.models import Post, User
 from Blog.database import session
 from getpass import getpass
 from werkzeug.security import generate_password_hash
+from flask.ext.migrate import Migrate, MigrateCommand # used to manage changes to the database schema
+from Blog.database import Base
+
+# create a class to hold the metadata object
+class DB(object):
+
+    def __init__(self, metadata):
+        self.metadata = metadata
+
+
 
 manager = Manager(app)
+
+migrate = Migrate(app, DB(Base.metadata))
+manager.add_command('db', MigrateCommand)
 
 @manager.command
 def run():
