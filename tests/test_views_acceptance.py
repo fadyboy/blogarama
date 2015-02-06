@@ -3,7 +3,7 @@
 import os
 import unittest
 import multiprocessing
-from urlparse import urlparse
+# from urlparse import urlparse
 import time
 from werkzeug.security import generate_password_hash
 from splinter import Browser
@@ -64,7 +64,7 @@ class TestViews(unittest.TestCase):
         button.click()
         # user returned to login page
         # self.assertEqual(self.browser.url, "http://0.0.0.0:8080/login")
-        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/logi")
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/login")
 
 # use when not running with Nose
 # if __name__ == "__main__":
