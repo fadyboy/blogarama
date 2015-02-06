@@ -17,7 +17,7 @@
             <a href="{{ url_for('posts', page=page + 1) }}">&larr; Older</a>
         </li>
         {% endif %}
-        {% if has_prev %}
+        {% if has_previous %}
         <li class="next">
             <a href="{{ url_for('posts', page=page - 1) }}">&rarr; Newer</a>
         </li>
