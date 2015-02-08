@@ -23,7 +23,7 @@ class TestViews(unittest.TestCase):
         Base.metadata.create_all(engine)
 
         # create sample user
-        self.user = models.User(name="Alice", email="alice@test.com", password=generate_password_hash("test"))
+        self.user = models.User(name="Alice", email="alice8@test.com", password=generate_password_hash("test"))
         session.add(self.user)
         session.commit()
 
@@ -56,4 +56,38 @@ class TestViews(unittest.TestCase):
         self.assertEqual(post.title, "Test Title")
         self.assertEqual(post.content, "<p>Test Content</p>\n")
         self.assertEqual(post.author, self.user)
+
+    def testEditPost(self):
+        # login and add a post
+        self.simulate_login()
+        self.client.post("/post/add", data={"title":"Test Title", "content":"Test content"})
+
+        posts = session.query(models.Post).all()
+        post = posts[0]
+        # verify current post title
+        self.assertEqual(post.title, "Test Title")
+        # Edit post title and content
+        post.title = "Test Title Edit"
+        post.content = "This is new content"
+
+        self.assertEqual(post.title, "Test Title Edit")
+        self.assertEqual(post.content, "This is new content")
+        self.assertEqual(len(posts), 1) # verify same post edited by confirming only 1 post in db
+
+    def testDeletePost(self):
+        # login and add a post
+        self.simulate_login()
+        self.client.post("/post/add", data={"title":"Test Title", "content":"Test Content"})
+        # confirm post added
+        posts = session.query(models.Post).all()
+        post = posts[0]
+        post_to_delete = session.query(models.Post).get(post.id)
+        self.assertEqual(len(posts), 1)
+        # delete post and confirm delete
+        session.delete(post_to_delete)
+        session.commit()
+        # confirm post count after delete
+        posts = session.query(models.Post).all()
+        self.assertEqual(len(posts), 0)
+
 
