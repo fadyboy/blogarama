@@ -39,6 +39,10 @@ class TestViews(unittest.TestCase):
             http_session["user_id"] = str(self.user.id) # user id of post author
             http_session["_fresh"] = True # key that tells app that session is still active
 
+    def login_and_post(self):
+        self.simulate_login()
+        self.client.post("/post/add", data={"title":"Test Title", "content":"Test Content"})
+
     def testAddPost(self):
         # login
         self.simulate_login()
@@ -59,8 +63,9 @@ class TestViews(unittest.TestCase):
 
     def testEditPost(self):
         # login and add a post
-        self.simulate_login()
-        self.client.post("/post/add", data={"title":"Test Title", "content":"Test content"})
+        # self.simulate_login()
+        # self.client.post("/post/add", data={"title":"Test Title", "content":"Test content"})
+        self.login_and_post()
 
         posts = session.query(models.Post).all()
         post = posts[0]
@@ -76,8 +81,9 @@ class TestViews(unittest.TestCase):
 
     def testDeletePost(self):
         # login and add a post
-        self.simulate_login()
-        self.client.post("/post/add", data={"title":"Test Title", "content":"Test Content"})
+        # self.simulate_login()
+        # self.client.post("/post/add", data={"title":"Test Title", "content":"Test Content"})
+        self.login_and_post()
         # confirm post added
         posts = session.query(models.Post).all()
         post = posts[0]
