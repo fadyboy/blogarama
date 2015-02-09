@@ -30,6 +30,7 @@ class TestViews(unittest.TestCase):
         session.add(self.user)
         session.commit()
 
+
         # start a new process for Flask test server to run on
         self.process = multiprocessing.Process(target=app.run)
         self.process.start()
@@ -42,6 +43,14 @@ class TestViews(unittest.TestCase):
         Base.metadata.drop_all(engine)
         self.browser.quit()
 
+    # create function to login
+    def login(self):
+        self.browser.visit("http://127.0.0.1:5000/login")
+        self.browser.fill("email", "alice4@test.com")
+        self.browser.fill("password", "test")
+        button = self.browser.find_by_css("button[type=submit]")
+        button.click()
+
 
     def testLoginCorrect(self):
         # self.browser.visit("http://0.0.0.0:8080/login")
@@ -50,6 +59,7 @@ class TestViews(unittest.TestCase):
         self.browser.fill("password", "test")
         button = self.browser.find_by_css("button[type=submit]")
         button.click()
+        print "url", self.browser.url
         # self.assertEqual(self.browser.url, "http://0.0.0.0:8080/")
         self.assertEqual(self.browser.url, "http://127.0.0.1:5000/")
 
@@ -65,6 +75,28 @@ class TestViews(unittest.TestCase):
         # user returned to login page
         # self.assertEqual(self.browser.url, "http://0.0.0.0:8080/login")
         self.assertEqual(self.browser.url, "http://127.0.0.1:5000/login")
+
+    def testAddPost(self):
+        """
+        Test to add post and view the post page
+        """
+        self.login()
+        add_post_link = self.browser.find_link_by_text("Add Post")
+        add_post_link.click()
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/post/add")
+        self.browser.fill("title", "Test Title")
+        self.browser.fill("content", "Adding Content")
+        button = self.browser.find_by_css("button[type=submit]")
+        button.click()
+        # verify user is redirected to the homepage and post is visible on page
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/")
+        # find link to post and open
+        posted_link = self.browser.find_link_by_href("/post/1")
+        posted_link.click()
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/post/1")
+
+
+
 
 # use when not running with Nose
 # if __name__ == "__main__":
