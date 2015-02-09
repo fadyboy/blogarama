@@ -23,7 +23,7 @@ class TestViews(unittest.TestCase):
         Base.metadata.create_all(engine)
 
         # create sample user
-        self.user = models.User(name="Alice", email="alice8@test.com", password=generate_password_hash("test"))
+        self.user = models.User(name="Alice", email="alice@test.com", password=generate_password_hash("test"))
         session.add(self.user)
         session.commit()
 
@@ -63,8 +63,6 @@ class TestViews(unittest.TestCase):
 
     def testEditPost(self):
         # login and add a post
-        # self.simulate_login()
-        # self.client.post("/post/add", data={"title":"Test Title", "content":"Test content"})
         self.login_and_post()
 
         posts = session.query(models.Post).all()
@@ -81,8 +79,6 @@ class TestViews(unittest.TestCase):
 
     def testDeletePost(self):
         # login and add a post
-        # self.simulate_login()
-        # self.client.post("/post/add", data={"title":"Test Title", "content":"Test Content"})
         self.login_and_post()
         # confirm post added
         posts = session.query(models.Post).all()
