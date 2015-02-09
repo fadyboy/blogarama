@@ -6,3 +6,5 @@ include
 lib
 *.pyc
 *.python
+*.log
+migrations
