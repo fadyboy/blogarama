@@ -51,6 +51,15 @@ class TestViews(unittest.TestCase):
         button = self.browser.find_by_css("button[type=submit]")
         button.click()
 
+    # create function to add post as action is repeated a few times
+    def add_post(self):
+        add_post_link = self.browser.find_link_by_text("Add Post")
+        add_post_link.click()
+        self.browser.fill("title", "This is a test title")
+        self.browser.fill("content", "This is test content")
+        button = self.browser.find_by_css("button[type=submit]")
+        button.click()
+
 
     def testLoginCorrect(self):
         # self.browser.visit("http://0.0.0.0:8080/login")
@@ -94,6 +103,40 @@ class TestViews(unittest.TestCase):
         posted_link = self.browser.find_link_by_href("/post/1")
         posted_link.click()
         self.assertEqual(self.browser.url, "http://127.0.0.1:5000/post/1")
+
+    def testEditPost(self):
+        """
+        Test to edit post
+        """
+        # login and add post
+        self.login()
+        self.add_post()
+        # click the Edit button for the post
+        edit_button = self.browser.find_by_css("button[name=edit]")
+        edit_button.click()
+        # confirm edit page for post is displayed
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/post/1/edit")
+        # edit the title and content
+        self.browser.fill("title", "Edited Title")
+        self.browser.fill("content", "Edited Content")
+        submit = self.browser.find_by_css("button[type=submit]")
+        submit.click()
+        # verify edited title and content changes
+        title_text = self.browser.is_text_present("Edited Title")
+        content_text = self.browser.is_text_present("Edited Content")
+        self.assertEqual(title_text, True)
+        self.assertEqual(content_text, True)
+
+    def testDeletePost(self):
+        """
+        Test to delete post
+        """
+        pass
+
+    def testCancelDelete(self):
+        """
+        Test to cancel delete of post
+        """
 
 
 

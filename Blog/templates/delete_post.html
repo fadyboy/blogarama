@@ -5,7 +5,7 @@
         <h3>{{ post.title }}</h3>
         {{ post.content }}
         <br />
-        <a href="{{ url_for("delete_post_confirm", id=post.id) }}"><button class="btn btn-default" type="button">Confirm?</button></a>
-        <a href="{{ url_for("posts") }}"><button class="btn btn-default" type="button">Cancel</button></a>
+        <a href="{{ url_for("delete_post_confirm", id=post.id) }}"><button class="btn btn-default" name="confirm">Confirm?</button></a>
+        <a href="{{ url_for("posts") }}"><button class="btn btn-default" name="cancel">Cancel</button></a>
 
 {% endblock %}
