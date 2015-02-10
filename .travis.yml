@@ -1,4 +1,4 @@
-# Continious integration script
+# Continious integration script for travis
 language: python
 python:
   - "2.7"
