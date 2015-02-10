@@ -131,12 +131,37 @@ class TestViews(unittest.TestCase):
         """
         Test to delete post
         """
-        pass
+        # login and add a post
+        self.login()
+        self.add_post()
+        delete_button = self.browser.find_by_css("button[name=delete]")
+        delete_button.click()
+        # confirm delete page for post displayed
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/post/1/delete")
+        confirm_delete = self.browser.find_by_css("button[name=confirm]")
+        confirm_delete.click()
+        # verify post no longer present on homepage
+        post_deleted = self.browser.is_text_not_present("This is a test title")
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/")
+        self.assertEqual(post_deleted, True)
 
     def testCancelDelete(self):
         """
         Test to cancel delete of post
         """
+        self.login()
+        self.add_post()
+        delete_button = self.browser.find_by_css("button[name=delete]")
+        delete_button.click()
+        # confirm delete page for displayed and click Cancel button
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/post/1/delete")
+        cancel_delete = self.browser.find_by_css("button[name=cancel]")
+        cancel_delete.click()
+        # verify that post is still displayed on homepage
+        self.assertEqual(self.browser.url, "http://127.0.0.1:5000/")
+        post_present = self.browser.is_text_present("This is a test title")
+        self.assertEqual(post_present, True)
+
 
 
 
